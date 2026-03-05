@@ -1,0 +1,45 @@
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.make
+build/
+Build/
+
+# Executables
+*.exe
+*.out
+*.app
+*.o
+*.a
+*.so
+*.dylib
+
+# IDE and Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.user
+*.swp
+*.sublime-*
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build directories
+bin/
+lib/
+dist/
+release/
+debug/
+
+# Temporary files
+*.tmp
+*.log
+*.bak
