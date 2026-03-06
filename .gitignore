@@ -43,3 +43,6 @@ debug/
 *.tmp
 *.log
 *.bak
+
+# Cache
+.cache/
