@@ -26,8 +26,13 @@ else()
     message(WARNING "Cannot find GTest!")
 endif()
 
+set(SOURCES
+    src/parser.cpp
+)
+
 # Executable a: PA1 which links against Boost Graph library
-add_executable(PA1 main.cpp)
+add_executable(PA1 main.cpp ${SOURCES})
+target_include_directories(PA1 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(PA1 PRIVATE Boost::graph)
 
 # Executable b: PA1_test which links against GTest and Boost Graph library
