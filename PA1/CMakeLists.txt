@@ -21,23 +21,39 @@ find_package(GTest REQUIRED)
 
 # Check if GTest was found and print the include directory
 if(GTest_FOUND)
-    message(STATUS "GTest include dir found in ${GTest_INCLUDE_DIRS}$")
+    message(STATUS "GTest include dir found in ${GTest_INCLUDE_DIRS}")
 else()
     message(WARNING "Cannot find GTest!")
 endif()
 
-set(SOURCES
-    src/parser.cpp
-)
+# Set the binary output directory for executables and libraries
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-# Executable a: PA1 which links against Boost Graph library
-add_executable(PA1 main.cpp ${SOURCES})
-target_include_directories(PA1 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(PA1 PRIVATE Boost::graph)
+# Define a static library for PA1 sources because both the main executable
+# and the test executable will use link against these sources.
+file(GLOB PA1_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+add_library(PA1_lib STATIC ${PA1_SOURCES})
+target_include_directories(PA1_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(PA1_lib PUBLIC Boost::graph)
 
-# Executable b: PA1_test which links against GTest and Boost Graph library
-add_executable(unit_tests unit_tests/test_graph.cpp)
-target_link_libraries(unit_tests PRIVATE Boost::graph GTest::gtest GTest::gtest_main)
+# Executable a: PA1 which links against the project library PA1_lib
+# (which in turn links against Boost::graph because of public linkage).
+# Note that PA1 itself does not directly link against Boost::graph,
+# but it can still use the graph library through PA1_lib.
+add_executable(PA1 main.cpp)
+target_link_libraries(PA1 PRIVATE PA1_lib)
 
+# Executables b: PA1_test which links against the project library PA1_lib and GTest libraries.
+# Note each test source file will be compiled into a separate test executable.
 include(GoogleTest)
-gtest_discover_tests(unit_tests)
+file(GLOB TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/unit_tests/*.cpp")
+
+foreach(TEST_SOURCE ${TEST_SOURCES})
+    get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE) # Get the filename without extension
+    add_executable(${TEST_NAME} ${TEST_SOURCE})
+    target_link_libraries(${TEST_NAME} PRIVATE PA1_lib GTest::gtest GTest::gtest_main)
+    gtest_discover_tests(${TEST_NAME})
+endforeach()
+

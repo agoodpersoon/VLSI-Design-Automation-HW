@@ -1,0 +1,8 @@
+# Only 2 inputs and 1 output. The output is an AND gate of the two inputs.
+#  eteorw
+
+INPUT(G1gat)
+INPUT(G2gat)
+OUTPUT(G3gat)
+
+G3gat = AND(G1gat, G2gat)

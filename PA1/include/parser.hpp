@@ -1,11 +1,12 @@
-#ifndef PARSER
-#define PARSER
+#ifndef __PARSER_H__
+#define __PARSER_H__
 
 #include "circuit.hpp"
-#include <fstream>
+#include <gtest/gtest.h>
 #include <string>
 class Parser {
 public:
-  CircuitGraph parse(const std::string &filepath);
+  Circuit parse(const std::string &filepath);
 };
-#endif /* PARSER */
+
+#endif // __PARSER_H__
