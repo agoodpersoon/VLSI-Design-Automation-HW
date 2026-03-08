@@ -1,0 +1,21 @@
+# 5 inputs and 3 outputs
+# 1 xor, 1 not, 1 or, 1 and
+
+
+# Inputs
+INPUT(G1gat)
+INPUT(G2gat)
+INPUT(G3gat)
+INPUT(G4gat)
+INPUT(G5gat)
+
+# Outputs
+OUTPUT(G6gat)
+OUTPUT(G8gat)
+OUTPUT(G9gat)
+
+# Logic
+G6gat = XOR(G1gat, G2gat)
+G8gat = NOT(G5gat)
+G7gat = AND(G3gat, G4gat)
+G9gat = OR(G6gat, G7gat, G8gat)
