@@ -1,15 +1,18 @@
-#include "boost/graph/adjacency_list.hpp"
-#include <boost/graph/graph_selectors.hpp>
 #include <iostream>
+#include <filesystem>
 
-int main() {
-  using Graph =
-      boost::adjacency_list<boost::listS, boost::vecS, boost::undirectedS>;
-  Graph g{};
-  auto v1 = add_vertex(g);
-  auto v2 = add_vertex(g);
-  add_edge(v1, v2, g);
-  std::cout << "Number of vertices: " << num_vertices(g) << std::endl;
-  std::cout << "Number of edges: " << num_edges(g) << std::endl;
+#include "circuit_manager.hpp"
+
+int main(int argc, char** argv) {
+  if (argc != 2) {
+    std::cerr << "Usage: " << argv[0] << " <relative_path_to_your_input_file>" << std::endl;
+    return 1;
+  }
+  std::string relative_path = argv[1];
+  std::filesystem::path project_root = std::filesystem::current_path().parent_path().parent_path();
+  std::filesystem::path input_path = project_root / relative_path;
+  std::cout << "Input file path: " << input_path << std::endl;
+  CircuitManager circuit_manager(input_path.string());
+  circuit_manager.get_circuit().print_info();
   return 0;
 }

@@ -5,6 +5,9 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <vector>
+#include <algorithm>
+#include <stdexcept>
 
 Circuit Parser::parse(const std::string &filepath) {
   std::ifstream file(filepath);
@@ -23,14 +26,14 @@ Circuit Parser::parse(const std::string &filepath) {
       // Parse input node
       // Input format: INPUT(<name>)
       std::string name = line.substr(6, line.size() - 7);
-      std::size_t id = circuit.get_gate_count(Circuit::NodeType::INPUT);
+      std::size_t id = circuit.get_node_count(Circuit::NodeType::INPUT);
       circuit.increment_gate_count(Circuit::NodeType::INPUT);
       circuit.add_node(name, id, Circuit::NodeType::INPUT);
     } else if (line.substr(0, 6) == "OUTPUT") {
       // Parse output node
       // Output format: OUTPUT(<name>)
       std::string name = line.substr(7, line.size() - 8);
-      std::size_t id = circuit.get_gate_count(Circuit::NodeType::OUTPUT);
+      std::size_t id = circuit.get_node_count(Circuit::NodeType::OUTPUT);
       circuit.increment_gate_count(Circuit::NodeType::OUTPUT);
       circuit.add_node(name, id, Circuit::NodeType::OUTPUT);
     } else {
@@ -45,8 +48,8 @@ Circuit Parser::parse(const std::string &filepath) {
       // a. extract output node
       std::string out_node_name = line.substr(0, eq_pos - 1);
       std::size_t out_node_id =
-          circuit.get_gate_count(Circuit::NodeType::DEFAULT);
-      
+          circuit.get_node_count(Circuit::NodeType::DEFAULT);
+
       // if the output node does not exist, create it as a default node.
       // otherwise it has been created as an output node, which is not a regular node
       if (circuit.find_vertex(out_node_name) == Circuit::Vertex()) {
@@ -85,7 +88,7 @@ Circuit Parser::parse(const std::string &filepath) {
             "Unknown gate type at line index: " + std::to_string(line_idx) +
             ", gate type: " + gate_type_str);
       }
-      std::size_t id = circuit.get_gate_count(gate_type);
+      std::size_t id = circuit.get_node_count(gate_type);
       std::string gate_name = gate_type_str + "_" + std::to_string(id);
       circuit.increment_gate_count(gate_type);
       circuit.add_node(gate_name, id, gate_type);

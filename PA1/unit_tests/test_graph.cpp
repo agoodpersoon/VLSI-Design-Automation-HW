@@ -10,5 +10,5 @@ TEST(Parse, Basic) {
   std::cout << "current path: " << std::filesystem::current_path() << std::endl;
   Circuit circuit = parser.parse("unit_tests/inputs/1and.in");
   // Check the number of nodes and edges.
-  EXPECT_EQ(circuit.get_gate_count(Circuit::NodeType::AND), 1);
+  EXPECT_EQ(circuit.get_node_count(Circuit::NodeType::AND), 1);
 }
