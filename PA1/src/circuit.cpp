@@ -23,10 +23,14 @@ void Circuit::add_edge(const std::string& from, const std::string& to) {
   boost::add_edge(from_it->second, to_it->second, graph_);
 }
 
+bool Circuit::has_vertex(const std::string& name) const {
+  return name_to_vertex_.find(name) != name_to_vertex_.end();
+}
+
 Circuit::Vertex Circuit::find_vertex(const std::string& name) const {
   auto it = name_to_vertex_.find(name);
   if (it == name_to_vertex_.end()) {
-    return Vertex(); // Return an invalid vertex if not found
+    return Trait::null_vertex(); // Return an invalid vertex if not found
   }
   return it->second;
 }

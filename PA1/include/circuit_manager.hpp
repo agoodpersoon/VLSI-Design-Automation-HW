@@ -9,10 +9,10 @@
 class CircuitManager {
 public:
   CircuitManager() = default;
-  explicit CircuitManager(const std::string &filepath) { load(filepath); }
+  explicit CircuitManager(const std::string &filepath) { load_circuit(filepath); }
 
   // Load circuit from file using Parser. Returns true on success.
-  bool load(const std::string &filepath) noexcept;
+  bool load_circuit(const std::string &filepath) noexcept;
 
   // Check if a circuit is currently loaded
   bool is_loaded() const noexcept { return circuit_ != nullptr; }

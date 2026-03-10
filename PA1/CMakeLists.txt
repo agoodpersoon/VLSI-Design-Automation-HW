@@ -3,6 +3,8 @@ project(PA1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+enable_testing()
+
 # Set policy to suppress CMP0167 warning about FindBoost module
 cmake_policy(SET CMP0167 NEW)
 
@@ -45,6 +47,7 @@ target_link_libraries(PA1_lib PUBLIC Boost::graph)
 add_executable(PA1 main.cpp)
 target_link_libraries(PA1 PRIVATE PA1_lib)
 
+
 # Executables b: PA1_test which links against the project library PA1_lib and GTest libraries.
 # Note each test source file will be compiled into a separate test executable.
 include(GoogleTest)
@@ -54,6 +57,8 @@ foreach(TEST_SOURCE ${TEST_SOURCES})
     get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE) # Get the filename without extension
     add_executable(${TEST_NAME} ${TEST_SOURCE})
     target_link_libraries(${TEST_NAME} PRIVATE PA1_lib GTest::gtest GTest::gtest_main)
-    gtest_discover_tests(${TEST_NAME})
+    gtest_discover_tests(${TEST_NAME}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
 endforeach()
 

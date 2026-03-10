@@ -1,12 +1,13 @@
 #include "circuit_manager.hpp"
 #include <stdexcept>
 
-bool CircuitManager::load(const std::string &filepath) noexcept {
+bool CircuitManager::load_circuit(const std::string &filepath) noexcept {
   try {
     Circuit circuit = parser_.parse(filepath);
     circuit_ = std::make_unique<Circuit>(std::move(circuit));
     return true;
-  } catch (const std::exception &) {
+  } catch (const std::exception &e) {
+    std::cerr << "Error parsing circuit: " << e.what() << std::endl;
     circuit_.reset();
     return false;
   }

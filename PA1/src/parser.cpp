@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <stdexcept>
+#include <cctype>
 
 Circuit Parser::parse(const std::string &filepath) {
   std::ifstream file(filepath);
@@ -28,14 +29,18 @@ Circuit Parser::parse(const std::string &filepath) {
       std::string name = line.substr(6, line.size() - 7);
       std::size_t id = circuit.get_node_count(Circuit::NodeType::INPUT);
       circuit.increment_gate_count(Circuit::NodeType::INPUT);
-      circuit.add_node(name, id, Circuit::NodeType::INPUT);
+      if (!circuit.has_vertex(name)) {
+        circuit.add_node(name, id, Circuit::NodeType::INPUT);
+      }
     } else if (line.substr(0, 6) == "OUTPUT") {
       // Parse output node
       // Output format: OUTPUT(<name>)
       std::string name = line.substr(7, line.size() - 8);
       std::size_t id = circuit.get_node_count(Circuit::NodeType::OUTPUT);
       circuit.increment_gate_count(Circuit::NodeType::OUTPUT);
-      circuit.add_node(name, id, Circuit::NodeType::OUTPUT);
+      if (!circuit.has_vertex(name)) {
+        circuit.add_node(name, id, Circuit::NodeType::OUTPUT);
+      }
     } else {
       // Parse gate node and edges
       // Gate format: <name> = <GATE_TYPE>(<input1>, <input2>, ...)
@@ -52,7 +57,7 @@ Circuit Parser::parse(const std::string &filepath) {
 
       // if the output node does not exist, create it as a default node.
       // otherwise it has been created as an output node, which is not a regular node
-      if (circuit.find_vertex(out_node_name) == Circuit::Vertex()) {
+      if (!circuit.has_vertex(out_node_name)) {
         circuit.increment_gate_count(Circuit::NodeType::DEFAULT);
         circuit.add_node(out_node_name, out_node_id,
                          Circuit::NodeType::DEFAULT);
@@ -70,6 +75,9 @@ Circuit Parser::parse(const std::string &filepath) {
 
       // b. extract gate node
       std::string gate_type_str = rest.substr(0, left_paren_pos);
+      std::transform(gate_type_str.begin(), gate_type_str.end(),
+             gate_type_str.begin(),
+             [](unsigned char c) { return std::toupper(c); });
       Circuit::NodeType gate_type;
       if (gate_type_str == "AND") {
         gate_type = Circuit::NodeType::AND;
@@ -79,6 +87,8 @@ Circuit Parser::parse(const std::string &filepath) {
         gate_type = Circuit::NodeType::NOT;
       } else if (gate_type_str == "XOR") {
         gate_type = Circuit::NodeType::XOR;
+      } else if (gate_type_str == "XNOR") {
+        gate_type = Circuit::NodeType::XNOR;
       } else if (gate_type_str == "NAND") {
         gate_type = Circuit::NodeType::NAND;
       } else if (gate_type_str == "NOR") {
@@ -107,6 +117,13 @@ Circuit Parser::parse(const std::string &filepath) {
       // d. connect edges
       // Connect input nodes to the gate node.
       for (const std::string &input_name : input_names) {
+        if (!circuit.has_vertex(input_name)) {
+          std::size_t input_node_id =
+              circuit.get_node_count(Circuit::NodeType::DEFAULT);
+          circuit.increment_gate_count(Circuit::NodeType::DEFAULT);
+          circuit.add_node(input_name, input_node_id,
+                           Circuit::NodeType::DEFAULT);
+        }
         circuit.add_edge(input_name,
                          gate_name); // Connect input node to gate node
       }

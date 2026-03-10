@@ -26,11 +26,14 @@ public:
   using Graph =
   boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS, Node>;
   using Vertex = boost::graph_traits<Graph>::vertex_descriptor;
+  using Trait = boost::graph_traits<Graph>;
 
 public:
   void add_node(const std::string& name, const std::size_t id, NodeType type);
 
   void add_edge(const std::string& from, const std::string& to);
+
+  bool has_vertex(const std::string& name) const;
 
   Vertex find_vertex(const std::string& name) const;
 
